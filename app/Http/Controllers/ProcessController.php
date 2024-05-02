@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Process;
+use App\Services\RamaJudicial\RamaJudicialProcessesService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
@@ -27,7 +28,7 @@ class ProcessController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $processKey)
+    public function show(RamaJudicialProcessesService $ramaJudicial, string $processKey)
     {
         if (strlen($processKey) !== 23) {
             return [
@@ -38,43 +39,33 @@ class ProcessController extends Controller
         $process = Process::where('llave_proceso', $processKey)->first();
 
         if (!$process) {
-            $processResponse = Http::get('https://consultaprocesos.ramajudicial.gov.co:448/api/v2/Procesos/Consulta/NumeroRadicacion', [
-                'numero' => $processKey,
-                'SoloActivos' => 'false',
-            ]);
+            $ramaJudicialProcess = $ramaJudicial->getProcess($processKey);
 
-            $processResponseJson = $processResponse->json();
-
-            if (count($processResponseJson['procesos']) === 0) {
+            if (!$ramaJudicialProcess) {
                 return [
                     'error' => "Process with key '$processKey' does not exist."
                 ];
             }
 
-            $processFound = $processResponseJson['procesos'][0];
-            $processId = $processFound['idProceso'];
+            $processId = $ramaJudicialProcess['idProceso'];
+            $ramaJudicialProcessDetails = $ramaJudicial->getProcessDetails($processId);
 
-            $processDetailsResponse = Http::get("https://consultaprocesos.ramajudicial.gov.co:448/api/v2/Proceso/Detalle/$processId");
-            $processDetailsJson = $processDetailsResponse->json();
-
-            $process = Process::create([
+            return Process::create([
                 'id_proceso' => $processId,
-                'llave_proceso' => $processDetailsJson['llaveProceso'],
-                'es_privado' => $processDetailsJson['esPrivado'],
-                'fecha_proceso' => $processDetailsJson['fechaProceso'],
-                'despacho' => $processDetailsJson['despacho'],
-                'ponente' => $processDetailsJson['ponente'],
-                'sujetos_procesales' => $processFound['sujetosProcesales'],
-                'tipo_proceso' => $processDetailsJson['tipoProceso'],
-                'clase_proceso' => $processDetailsJson['claseProceso'],
-                'subclase_proceso' => $processDetailsJson['subclaseProceso'],
-                'recurso' => $processDetailsJson['recurso'],
-                'ubicacion' => $processDetailsJson['ubicacion'],
-                'contenido_radicacion' => $processDetailsJson['contenidoRadicacion'],
-                'ultima_actualizacion' => $processDetailsJson['ultimaActualizacion'],
+                'llave_proceso' => $ramaJudicialProcessDetails['llaveProceso'],
+                'es_privado' => $ramaJudicialProcessDetails['esPrivado'],
+                'fecha_proceso' => $ramaJudicialProcessDetails['fechaProceso'],
+                'despacho' => $ramaJudicialProcessDetails['despacho'],
+                'ponente' => $ramaJudicialProcessDetails['ponente'],
+                'sujetos_procesales' => $ramaJudicialProcess['sujetosProcesales'],
+                'tipo_proceso' => $ramaJudicialProcessDetails['tipoProceso'],
+                'clase_proceso' => $ramaJudicialProcessDetails['claseProceso'],
+                'subclase_proceso' => $ramaJudicialProcessDetails['subclaseProceso'],
+                'recurso' => $ramaJudicialProcessDetails['recurso'],
+                'ubicacion' => $ramaJudicialProcessDetails['ubicacion'],
+                'contenido_radicacion' => $ramaJudicialProcessDetails['contenidoRadicacion'],
+                'ultima_actualizacion' => $ramaJudicialProcessDetails['ultimaActualizacion'],
             ]);
-
-            return $process;
         }
 
         return $process;
