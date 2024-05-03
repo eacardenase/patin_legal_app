@@ -25,4 +25,9 @@ class Process extends Model
         'contenido_radicacion',
         'ultima_actualizacion',
     ];
+
+    public function actions()
+    {
+        return $this->hasMany(ProcessAction::class);
+    }
 }

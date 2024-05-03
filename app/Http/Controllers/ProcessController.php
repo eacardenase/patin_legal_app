@@ -49,7 +49,7 @@ class ProcessController extends Controller
             $processId = $ramaJudicialProcess['idProceso'];
             $ramaJudicialProcessDetails = $ramaJudicial->getProcessDetails($processId);
 
-            return $this->store([
+            $process = $this->store([
                     'id_proceso' => $processId,
                     'llave_proceso' => $ramaJudicialProcessDetails['llaveProceso'],
                     'es_privado' => $ramaJudicialProcessDetails['esPrivado'],
@@ -66,6 +66,22 @@ class ProcessController extends Controller
                     'ultima_actualizacion' => $ramaJudicialProcessDetails['ultimaActualizacion'],
                 ]
             );
+
+            $processActions = $ramaJudicial->getProcessActions($processId);
+
+            foreach ($processActions as $action) {
+                $process->actions()->create([
+                    'id_reg_actuacion' => $action['idRegActuacion'],
+                    'consecutivo_actuacion' => $action['consActuacion'],
+                    'fecha_actuacion' => $action['fechaActuacion'],
+                    'actuacion' => $action['actuacion'],
+                    'anotacion' => $action['anotacion'],
+                    'fecha_registro' => $action['fechaRegistro'],
+                    'con_documentos' => $action['conDocumentos'],
+                ]);
+            }
+
+            return $process;
         }
 
         return $process;
