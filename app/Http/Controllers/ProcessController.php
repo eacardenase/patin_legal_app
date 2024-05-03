@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Process;
 use App\Services\RamaJudicial\RamaJudicialProcessesService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 
 class ProcessController extends Controller
 {
@@ -20,9 +19,9 @@ class ProcessController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(array $processData)
     {
-        //
+        return Process::create($processData);
     }
 
     /**
@@ -50,22 +49,23 @@ class ProcessController extends Controller
             $processId = $ramaJudicialProcess['idProceso'];
             $ramaJudicialProcessDetails = $ramaJudicial->getProcessDetails($processId);
 
-            return Process::create([
-                'id_proceso' => $processId,
-                'llave_proceso' => $ramaJudicialProcessDetails['llaveProceso'],
-                'es_privado' => $ramaJudicialProcessDetails['esPrivado'],
-                'fecha_proceso' => $ramaJudicialProcessDetails['fechaProceso'],
-                'despacho' => $ramaJudicialProcessDetails['despacho'],
-                'ponente' => $ramaJudicialProcessDetails['ponente'],
-                'sujetos_procesales' => $ramaJudicialProcess['sujetosProcesales'],
-                'tipo_proceso' => $ramaJudicialProcessDetails['tipoProceso'],
-                'clase_proceso' => $ramaJudicialProcessDetails['claseProceso'],
-                'subclase_proceso' => $ramaJudicialProcessDetails['subclaseProceso'],
-                'recurso' => $ramaJudicialProcessDetails['recurso'],
-                'ubicacion' => $ramaJudicialProcessDetails['ubicacion'],
-                'contenido_radicacion' => $ramaJudicialProcessDetails['contenidoRadicacion'],
-                'ultima_actualizacion' => $ramaJudicialProcessDetails['ultimaActualizacion'],
-            ]);
+            return $this->store([
+                    'id_proceso' => $processId,
+                    'llave_proceso' => $ramaJudicialProcessDetails['llaveProceso'],
+                    'es_privado' => $ramaJudicialProcessDetails['esPrivado'],
+                    'fecha_proceso' => $ramaJudicialProcessDetails['fechaProceso'],
+                    'despacho' => $ramaJudicialProcessDetails['despacho'],
+                    'ponente' => $ramaJudicialProcessDetails['ponente'],
+                    'sujetos_procesales' => $ramaJudicialProcess['sujetosProcesales'],
+                    'tipo_proceso' => $ramaJudicialProcessDetails['tipoProceso'],
+                    'clase_proceso' => $ramaJudicialProcessDetails['claseProceso'],
+                    'subclase_proceso' => $ramaJudicialProcessDetails['subclaseProceso'],
+                    'recurso' => $ramaJudicialProcessDetails['recurso'],
+                    'ubicacion' => $ramaJudicialProcessDetails['ubicacion'],
+                    'contenido_radicacion' => $ramaJudicialProcessDetails['contenidoRadicacion'],
+                    'ultima_actualizacion' => $ramaJudicialProcessDetails['ultimaActualizacion'],
+                ]
+            );
         }
 
         return $process;
