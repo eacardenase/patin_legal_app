@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Process;
 use App\Services\RamaJudicial\RamaJudicialProcessesService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ProcessController extends Controller
 {

@@ -14,13 +14,13 @@ return new class extends Migration
         Schema::create('process_actions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('process_id')->constrained()->cascadeOnDelete();
-            $table->string('id_reg_actuacion');
-            $table->integer('consecutivo_actuacion');
-            $table->string('fecha_actuacion');
-            $table->string('actuacion');
-            $table->text('anotacion');
-            $table->string('fecha_registro');
-            $table->boolean('con_documentos');
+            $table->string('id_reg_actuacion')->nullable();
+            $table->integer('consecutivo_actuacion')->nullable();
+            $table->string('fecha_actuacion')->nullable();
+            $table->string('actuacion')->nullable();
+            $table->text('anotacion')->nullable();
+            $table->string('fecha_registro')->nullable();
+            $table->boolean('con_documentos')->nullable();
             $table->timestamps();
         });
     }

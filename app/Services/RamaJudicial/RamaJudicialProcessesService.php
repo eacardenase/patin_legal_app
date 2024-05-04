@@ -39,23 +39,23 @@ class RamaJudicialProcessesService implements ProcessesService
         $processActionsResponse = Http::get("$this->url/Proceso/Actuaciones/$processId?pagina=$pageNumber");
         $processActionsJson = $processActionsResponse->json();
 
-        $pagesCount = $processActionsJson['paginacion']['cantidadPaginas'];
+        $pagesCount = $processActionsJson['paginacion']['cantidadPaginas'] ?? 10;
         $actuaciones = $processActionsJson['actuaciones'];
 
         $processActions = array_merge($processActions, $actuaciones);
 
-//        while ($pageNumber < $pagesCount) {
-//            $pageNumber++;
-//
-//            $processActionsResponse = Http::get("$this->url/Proceso/Actuaciones/$processId?pagina=$pageNumber");
-//            $processActionsJson = $processActionsResponse->json();
-//
-//            $actuaciones = $processActionsJson['actuaciones'];
-//
-//            foreach ($actuaciones as $actuacion) {
-//                $processActions[] = $actuacion;
-//            }
-//        }
+        while ($pageNumber < $pagesCount) {
+            $pageNumber++;
+
+            $processActionsResponse = Http::get("$this->url/Proceso/Actuaciones/$processId?pagina=$pageNumber");
+            $processActionsJson = $processActionsResponse->json();
+
+            $actuaciones = $processActionsJson['actuaciones'];
+
+            foreach ($actuaciones as $actuacion) {
+                $processActions[] = $actuacion;
+            }
+        }
 
         return $processActions;
     }
