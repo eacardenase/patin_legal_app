@@ -14,7 +14,9 @@ class ProcessController extends Controller
      */
     public function index()
     {
-        return Process::paginate(10);
+        return view("dashboard", [
+            'processes' => Process::paginate(10)
+        ]);
     }
 
     /**
