@@ -16,4 +16,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::resource('/processes', ProcessController::class)->except([
+    'index', 'create'
+]);
+
 require __DIR__.'/auth.php';
