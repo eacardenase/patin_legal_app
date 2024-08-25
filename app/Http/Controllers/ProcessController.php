@@ -14,10 +14,11 @@ class ProcessController extends Controller
      */
     public function index()
     {
-        $userId = auth()->id();
+        $user = auth()->user();
+        $processes = $user->processes()->paginate(10);
 
         return view("dashboard", [
-            'processes' => Process::where('user_id', $userId)->paginate(10)
+            'processes' => $processes
         ]);
     }
 
@@ -26,12 +27,16 @@ class ProcessController extends Controller
      */
     public function store()
     {
-        $attributes = [
-            'user_id' => auth()->id(),
-            ...$this->validateProcess()
-        ];
+        $attributes = $this->validateProcess();
 
-        Process::create($attributes);
+        $process = Process::where('id_proceso', $attributes['id_proceso'])->first();
+
+        if (!$process) {
+            $process = Process::create($attributes);
+        }
+
+        $user = auth()->user();
+        $user->processes()->attach($process->id);
 
         return redirect('/dashboard');
     }
@@ -51,7 +56,9 @@ class ProcessController extends Controller
      */
     public function destroy(Process $process)
     {
-        $process->delete();
+        $user = auth()->user();
+
+        $user->processes()->detach($process->id);
 
         return redirect()->intended(route('dashboard', absolute: false));
     }
@@ -59,7 +66,24 @@ class ProcessController extends Controller
     protected function validateProcess()
     {
         $validator = Validator::make(request()->all(), [
-            'process' => ['required', 'regex:/^\d{23}$/', 'unique:processes,llave_proceso,user_id'],
+            'process' => [
+                'required',
+                'regex:/^\d{23}$/',
+                function ($attribute, $value, $fail) {
+                    $userId = auth()->id();
+
+                    // Query the processes table, joined with the process_user table, to check if the same 'llave_proceso' exists for this user
+                    $existingProcess = Process::where('llave_proceso', $value)
+                        ->whereHas('users', function ($query) use ($userId) {
+                            $query->where('user_id', $userId);
+                        })
+                        ->exists();
+
+                    if ($existingProcess) {
+                        $fail("You already have stored this process.");
+                    }
+                },
+            ],
         ]);
 
         $validated = $validator->validated();

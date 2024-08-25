@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Process extends Model
 {
@@ -25,7 +25,6 @@ class Process extends Model
         'ubicacion',
         'contenido_radicacion',
         'ultima_actualizacion',
-        'user_id'
     ];
 
     public function actions()
@@ -33,8 +32,8 @@ class Process extends Model
         return $this->hasMany(ProcessAction::class);
     }
 
-    public function user(): BelongsTo
+    public function users(): BelongsToMany
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsToMany(User::class, 'process_user');
     }
 }

@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('processes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('id_proceso')->unique();
             $table->string('llave_proceso')->unique();
             $table->boolean('es_privado');

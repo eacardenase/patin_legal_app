@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -45,8 +46,8 @@ class User extends Authenticatable
         ];
     }
 
-    public function processes()
+    public function processes(): BelongsToMany
     {
-        return $this->hasMany(Process::class);
+        return $this->belongsToMany(Process::class, 'process_user');
     }
 }
