@@ -14,8 +14,10 @@ class ProcessController extends Controller
      */
     public function index()
     {
+        $userId = auth()->id();
+
         return view("dashboard", [
-            'processes' => Process::paginate(10)
+            'processes' => Process::where('user_id', $userId)->paginate(10)
         ]);
     }
 
@@ -24,7 +26,10 @@ class ProcessController extends Controller
      */
     public function store()
     {
-        $attributes = $this->validateProcess();
+        $attributes = [
+            'user_id' => auth()->id(),
+            ...$this->validateProcess()
+        ];
 
         Process::create($attributes);
 
@@ -54,7 +59,7 @@ class ProcessController extends Controller
     protected function validateProcess()
     {
         $validator = Validator::make(request()->all(), [
-            'process' => ['required', 'regex:/^\d{23}$/', 'unique:processes,llave_proceso'],
+            'process' => ['required', 'regex:/^\d{23}$/', 'unique:processes,llave_proceso,user_id'],
         ]);
 
         $validated = $validator->validated();

@@ -44,4 +44,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function processes()
+    {
+        return $this->hasMany(Process::class);
+    }
 }
