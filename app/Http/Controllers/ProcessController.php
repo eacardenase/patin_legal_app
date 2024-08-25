@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Process;
 use App\Services\RamaJudicial\RamaJudicialProcessesService;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class ProcessController extends Controller
 {
@@ -58,12 +56,6 @@ class ProcessController extends Controller
         ]);
 
         $processKey = request()->input('process');
-
-        if (strlen($processKey) !== 23) {
-            return [
-                "error" => "Process key must be 23 characters."
-            ];
-        }
 
         $ramaJudicial = new RamaJudicialProcessesService();
         $ramaJudicialProcess = $ramaJudicial->getProcess($processKey);
