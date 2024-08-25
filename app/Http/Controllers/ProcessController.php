@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Process;
 use App\Services\RamaJudicial\RamaJudicialProcessesService;
+use DateTime;
 use Illuminate\Support\Facades\Validator;
 
 class ProcessController extends Controller
@@ -90,7 +91,7 @@ class ProcessController extends Controller
             'recurso' => $ramaJudicialProcessDetails['recurso'],
             'ubicacion' => $ramaJudicialProcessDetails['ubicacion'],
             'contenido_radicacion' => $ramaJudicialProcessDetails['contenidoRadicacion'],
-            'ultima_actualizacion' => $ramaJudicialProcessDetails['ultimaActualizacion'],
+            'ultima_actualizacion' => new DateTime($ramaJudicialProcessDetails['ultimaActualizacion']),
         ];
     }
 }

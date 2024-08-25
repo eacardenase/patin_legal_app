@@ -24,7 +24,7 @@
                     name="process"
                     type="text"
                     class="mt-1 block w-3/4"
-                    placeholder="{{ __('Process Key') }}"
+                    placeholder="{{ __('Ingrese los 23 dígitos del número de Radicación') }}"
                 />
             </div>
 

@@ -17,6 +17,14 @@
                             </div>
                         </td>
 
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="text-sm font-medium text-gray-900">
+                                    {{ date('d-m-Y', strtotime($process->ultima_actualizacion)) }}
+                                </div>
+                            </div>
+                        </td>
+
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <x-secondary-button x-on:click="$dispatch('close')">
                                 <a href="/processes/{{ $process->id }}">
