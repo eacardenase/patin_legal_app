@@ -13,7 +13,10 @@
                 <div class="p-6 text-gray-900">
                     <div>
                         @include('processes.partials.search-process-form')
+                        
                     </div>
+                    
+                    <x-input-error :messages="$errors->get('process')" class="mt-2" />
                 @if ($processes->count())
                     @include('processes.index', ['processes' => $processes])
                 @else

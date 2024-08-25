@@ -53,6 +53,10 @@ class ProcessController extends Controller
 
     protected function validateProcess()
     {
+        request()->validate([
+            'process' => ['required', 'regex:/^\d{23}$/', 'unique:processes,llave_proceso'],
+        ]);
+
         $processKey = request()->input('process');
 
         if (strlen($processKey) !== 23) {
