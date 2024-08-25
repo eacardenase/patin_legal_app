@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Process;
 use App\Services\RamaJudicial\RamaJudicialProcessesService;
+use Illuminate\Support\Facades\Validator;
 
 class ProcessController extends Controller
 {
@@ -51,20 +52,27 @@ class ProcessController extends Controller
 
     protected function validateProcess()
     {
-        request()->validate([
+        $validator = Validator::make(request()->all(), [
             'process' => ['required', 'regex:/^\d{23}$/', 'unique:processes,llave_proceso'],
         ]);
 
         $processKey = request()->input('process');
 
+        $validator->validate();
+
         $ramaJudicial = new RamaJudicialProcessesService();
         $ramaJudicialProcess = $ramaJudicial->getProcess($processKey);
 
-        if (!$ramaJudicialProcess) {
-            return [
-                'error' => "Process with key '$processKey' does not exist."
-            ];
-        }
+        $validator->after(function ($validator) use ($processKey, $ramaJudicialProcess) {
+            if (!$ramaJudicialProcess) {
+                $validator->errors()->add(
+                    'process',
+                    "Process with key '$processKey' does not exist."
+                );
+            }
+        });
+
+        $validator->validate();
 
         $processId = $ramaJudicialProcess['idProceso'];
         $ramaJudicialProcessDetails = $ramaJudicial->getProcessDetails($processId);
