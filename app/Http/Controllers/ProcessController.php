@@ -56,23 +56,22 @@ class ProcessController extends Controller
             'process' => ['required', 'regex:/^\d{23}$/', 'unique:processes,llave_proceso'],
         ]);
 
-        $processKey = request()->input('process');
-
-        $validator->validate();
+        $validated = $validator->validated();
+        $processKey = $validated['process'];
 
         $ramaJudicial = new RamaJudicialProcessesService();
-        $ramaJudicialProcess = $ramaJudicial->getProcess($processKey);
+        $ramaJudicialProcess = null;
 
-        $validator->after(function ($validator) use ($processKey, $ramaJudicialProcess) {
+        $validator->after(function ($validator) use ($processKey, $ramaJudicial, &$ramaJudicialProcess) {
+            $ramaJudicialProcess = $ramaJudicial->getProcess($processKey);
+
             if (!$ramaJudicialProcess) {
                 $validator->errors()->add(
                     'process',
                     "Process with key '$processKey' does not exist."
                 );
             }
-        });
-
-        $validator->validate();
+        })->validate();
 
         $processId = $ramaJudicialProcess['idProceso'];
         $ramaJudicialProcessDetails = $ramaJudicial->getProcessDetails($processId);
