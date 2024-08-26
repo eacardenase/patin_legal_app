@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\ProcessActionsJob;
 use App\Models\Process;
 use App\Services\RamaJudicial\RamaJudicialProcessesService;
 use DateTime;
@@ -37,6 +38,8 @@ class ProcessController extends Controller
 
         $user = auth()->user();
         $user->processes()->attach($process->id);
+
+        ProcessActionsJob::dispatch($process);
 
         return redirect('/dashboard');
     }
