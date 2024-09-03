@@ -10,7 +10,7 @@
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex items-center">
                                 <div class="text-sm font-medium text-gray-900">
-                                    <a href="/processes/{{ $process->id }}">
+                                    <a href="/processes/{{ $process->llave_proceso }}">
                                         {{ $process->ponente }}
                                     </a>
                                 </div>
@@ -27,13 +27,13 @@
 
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <x-secondary-button x-on:click="$dispatch('close')">
-                                <a href="/processes/{{ $process->id }}">
+                                <a href="/processes/{{ $process->llave_proceso }}">
                                     {{ __('Show') }}
                                 </a>
                             </x-secondary-button>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <form action="/processes/{{ $process->id }}" method="post">
+                            <form action="/processes/{{ $process->llave_proceso }}" method="post">
                                 @csrf
                                 @method('delete')
 

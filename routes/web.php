@@ -16,8 +16,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::resource('/processes', ProcessController::class)->except([
-    'index', 'create'
-]);
+// Route::resource('/processes', ProcessController::class)->except([
+//     'index', 'create'
+// ]);
+
+Route::post('/processes', [ProcessController::class, 'store']);
+Route::get('/processes/{process:llave_proceso}', [ProcessController::class, 'show']);
+Route::delete('/processes/{process:llave_proceso}', [ProcessController::class, 'destroy']);
 
 require __DIR__.'/auth.php';
